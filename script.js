@@ -1,59 +1,66 @@
-body {
-  font-family: sans-serif;
-  background: #f4f4f4;
-  padding: 20px;
-}
+const malla = [
+  {
+    semestre: 1,
+    asignaturas: [
+      {
+        nombre: "Anatomía I",
+        requisitos: [],
+        mencion: "común"
+      },
+      {
+        nombre: "Biología Celular",
+        requisitos: [],
+        mencion: "común"
+      }
+    ]
+  },
+  {
+    semestre: 2,
+    asignaturas: [
+      {
+        nombre: "Fisiología",
+        requisitos: ["Anatomía I"],
+        mencion: "común"
+      }
+    ]
+  }
+];
 
-h1 {
-  text-align: center;
-}
+const colores = {
+  común: "#dfefff",
+  laboratorio: "#ffdede",
+  imagenologia: "#deffde"
+};
 
-.semestre {
-  margin-bottom: 20px;
-}
+const contenedor = document.getElementById("malla");
+const modal = document.getElementById("modal");
+const modalInfo = document.getElementById("modal-info");
+const closeModal = document.getElementById("close-modal");
 
-.asignatura {
-  background: #dfefff;
-  border: 1px solid #aaa;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+malla.forEach(bloque => {
+  const semestreDiv = document.createElement("div");
+  semestreDiv.className = "semestre";
+  semestreDiv.innerHTML = `<h2>Semestre ${bloque.semestre}</h2>`;
+  bloque.asignaturas.forEach(asig => {
+    const a = document.createElement("div");
+    a.className = "asignatura";
+    a.style.backgroundColor = colores[asig.mencion] || "#fff";
+    a.innerHTML = `<strong>${asig.nombre}</strong>`;
+    a.addEventListener("click", () => {
+      modalInfo.innerHTML = `
+        <h3>${asig.nombre}</h3>
+        <p><strong>Semestre:</strong> ${bloque.semestre}</p>
+        <p><strong>Requisitos:</strong> ${asig.requisitos.join(", ") || "Ninguno"}</p>
+        <p><strong>Mención:</strong> ${asig.mencion}</p>
+      `;
+      modal.classList.remove("hidden");
+    });
+    semestreDiv.appendChild(a);
+  });
+  contenedor.appendChild(semestreDiv);
+});
 
-.asignatura:hover {
-  background: #bddfff;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
-  position: relative;
-}
-
-#close-modal {
-  position: absolute;
-  top: 5px;
-  right: 15px;
-  cursor: pointer;
-  font-size: 20px;
-}
-
-.hidden {
-  display: none;
-}
+closeModal.onclick = () => modal.classList.add("hidden");
+modal.onclick = (e) => {
+  if (e.target === modal) modal.classList.add("hidden");
+};
